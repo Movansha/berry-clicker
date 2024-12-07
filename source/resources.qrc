@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/MainWindow">
+    <file>resources/mouse_icons/both.png</file>
+    <file>resources/mouse_icons/left.png</file>
+    <file>resources/mouse_icons/right.png</file>
+    <file>resources/window.ico</file>
+  </qresource>
+</RCC>
