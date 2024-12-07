@@ -20,9 +20,9 @@ https://github.com/Movansha/berry-clicker/releases
 
 # Easy to Use (Step by Step)
 - Download the zip file -> https://github.com/Movansha/berry-clicker/releases
-- Extract file named "Berry_Clicker_v1.0"
+- Extract file named "Berry_Clicker_v1.0.exe"
 - Run the executable
 - Install the application
 - Run it
 - Adjust the settings according to your needs
-- Press the key you  set
+- Press the key you set
