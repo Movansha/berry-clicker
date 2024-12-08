@@ -1,8 +1,9 @@
-# ![BC_icon](https://github.com/user-attachments/assets/cf113c03-30ed-4afa-b720-636077001cbf) Berry Clicker v1.0 (Windows)
+# ![BC_icon](https://github.com/user-attachments/assets/cf113c03-30ed-4afa-b720-636077001cbf) Berry Clicker v1.1 (Windows)
 
 An auto clicker application for Windows.
 
 This application developed with C++.
+
 Qt 6.7.3 (non-commerical) is used in this project.
 
 This app clicks automatically the mouse buttons (left, right or both) you selected.
@@ -15,7 +16,7 @@ https://github.com/Movansha/berry-clicker/releases
 
 
 ## Screenshot
-![BC-SS-1](https://github.com/user-attachments/assets/db302e37-67dc-4099-b479-0788d9fdd21f)
+![BC-SS-1](https://github.com/user-attachments/assets/6fe44b7b-b982-4c4c-8c34-66c9e0dbef12)
 
 
 # Easy to Use (Step by Step)
