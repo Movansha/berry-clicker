@@ -382,7 +382,7 @@ border: 2 solid #4a77ff;
          </property>
          <property name="styleSheet">
           <string notr="true">QWidget {background: #252525;}
-#mb_Widget {border: 1 solid #292929; border-radius: 17;}</string>
+#sound_Widget {border: 1 solid #292929; border-radius: 17;}</string>
          </property>
          <layout class="QGridLayout" name="sound_Layout">
           <property name="leftMargin">
@@ -1105,21 +1105,21 @@ border-radius: 8;
 }
 
 QDoubleSpinBox::up-button {
-width: 21;
-height: 21;
+width: 19;
+height: 19;
 subcontrol-origin: border;
 subcontrol-position: top right;
 }
 
 QDoubleSpinBox::down-button {
-width: 21;
-height: 21;
+width: 19;
+height: 19;
 subcontrol-origin: border;
 subcontrol-position: bottom right;
 }
 
 QDoubleSpinBox::focus {
-border: 2 solid #202020;
+border: 2 solid #191919;
 }</string>
             </property>
             <property name="alignment">
@@ -1169,21 +1169,21 @@ border-radius: 8;
 }
 
 QDoubleSpinBox::up-button {
-width: 21;
-height: 21;
+width: 19;
+height: 19;
 subcontrol-origin: border;
 subcontrol-position: top right;
 }
 
 QDoubleSpinBox::down-button {
-width: 21;
-height: 21;
+width: 19;
+height: 19;
 subcontrol-origin: border;
 subcontrol-position: bottom right;
 }
 
 QDoubleSpinBox::focus {
-border: 2 solid #202020;
+border: 2 solid #191919;
 }</string>
             </property>
             <property name="alignment">
