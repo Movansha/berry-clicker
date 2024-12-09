@@ -23,5 +23,3 @@ https://github.com/Movansha/berry-clicker/releases
 - Run the application
 - Adjust the settings according to your needs
 - Press the key you set
-
-#
