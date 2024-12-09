@@ -2,9 +2,7 @@
 
 An auto clicker application for Windows.
 
-This application developed with C++.
-
-Qt 6.7.3 (non-commerical) is used in this project.
+This application developed with C++ and Qt 6.7.3 (non-commerical) is used in this project.
 
 This app clicks automatically the mouse buttons (left, right or both) you selected.
 
@@ -21,9 +19,9 @@ https://github.com/Movansha/berry-clicker/releases
 
 ## Easy to Use (Step by Step)
 - Download the zip file -> https://github.com/Movansha/berry-clicker/releases
-- Extract file named "Berry-Clicker_v1.1.exe"
-- Run the executable
-- Install the application
+- Extract file named "Berry-Clicker_v1.1.exe" and install it.
 - Run the application
 - Adjust the settings according to your needs
 - Press the key you set
+
+#
