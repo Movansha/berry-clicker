@@ -1,4 +1,4 @@
-# ![BC_icon](https://github.com/user-attachments/assets/cf113c03-30ed-4afa-b720-636077001cbf) Berry Clicker v1.1 (Windows)
+# ![BC_icon](https://github.com/user-attachments/assets/cf113c03-30ed-4afa-b720-636077001cbf) Berry Clicker v1.2 (Windows)
 
 An auto clicker application for Windows.
 
@@ -14,12 +14,13 @@ https://github.com/Movansha/berry-clicker/releases
 
 
 ## Screenshot
-![BC-SS-1](https://github.com/user-attachments/assets/6fe44b7b-b982-4c4c-8c34-66c9e0dbef12)
+![bc-ss](https://github.com/user-attachments/assets/8665d6d0-4873-497a-86b2-6f7cf914c496)
+
 
 
 ## Easy to Use (Step by Step)
 - Download the zip file -> https://github.com/Movansha/berry-clicker/releases
-- Extract file named "Berry-Clicker_v1.1.exe" and install it.
+- Extract file named "Berry-Clicker_v1.2.exe" and install it.
 - Run the application
 - Adjust the settings according to your needs
 - Press the key you set
