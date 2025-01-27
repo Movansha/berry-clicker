@@ -10,7 +10,7 @@ This app clicks automatically the mouse buttons (left, right or both) you select
 
 
 ## Download The Latest Release
-https://github.com/Movansha/berry-clicker/releases
+[Download](https://github.com/Movansha/berry-clicker/releases/latest)
 
 
 ## Screenshot
@@ -19,7 +19,7 @@ https://github.com/Movansha/berry-clicker/releases
 
 
 ## Easy to Use (Step by Step)
-- Download the zip file -> https://github.com/Movansha/berry-clicker/releases
+- Download the zip file -> [Latest Release](https://github.com/Movansha/berry-clicker/releases/latest)
 - Extract file named "Berry-Clicker_v1.2.exe" and install it.
 - Run the application
 - Adjust the settings according to your needs
