@@ -10,7 +10,7 @@
 #pragma comment(lib, "WinMM.lib")
 
 
-using str = std::string;
+using std::string;
 using std::thread;
 
 
@@ -28,7 +28,7 @@ HHOOK mouse_Hook, keyboard_Hook;
 DWORD msg_loop_ID;
 
 
-void send_Click(str button) {
+static void send_Click(const string& button) {
     INPUT input = { 0 };
     input.type = INPUT_MOUSE;
 
@@ -37,7 +37,7 @@ void send_Click(str button) {
         left::skip_Next_Down = true;
     }
 
-    else if (button == "right") {
+    if (button == "right") {
         input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
         right::skip_Next_Down = true;
     }
@@ -54,7 +54,7 @@ void send_Click(str button) {
         left::skip_Next_Up = true;
     }
 
-    else if (button == "right") {
+    if (button == "right") {
         input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
         right::skip_Next_Up = true;
     }
@@ -77,12 +77,12 @@ void clicker::left() {
         while ((is_active_L == true && config::mouse_hold_L == false) ||
             (is_active_L == true && config::mouse_hold_L == true && left::status == true)) {
 
-            thread click_Thread(send_Click, "left");
+            thread click = thread(send_Click, "left");
 
-            std::chrono::duration<double> wait(1.0 / config::left_CPS);
+            std::chrono::milliseconds wait(1000 / config::left_CPS);
             std::this_thread::sleep_for(wait);
 
-            if (click_Thread.joinable()) click_Thread.join();
+            if (click.joinable()) click.join();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(15));
     }
@@ -93,12 +93,12 @@ void clicker::right() {
         while ((is_active_R == true && config::mouse_hold_R == false) ||
             (is_active_R == true && config::mouse_hold_R == true && right::status == true)) {
 
-            thread click_Thread(send_Click, "right");
+            thread click = thread(send_Click, "right");
 
-            std::chrono::duration<double> wait(1.0 / config::right_CPS);
+            std::chrono::milliseconds wait(1000 / config::right_CPS);
             std::this_thread::sleep_for(wait);
 
-            if (click_Thread.joinable()) click_Thread.join();
+            if (click.joinable()) click.join();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(15));
     }
@@ -107,7 +107,7 @@ void clicker::right() {
 
 // Keyboard and mouse >>
 
-void change_toggle_key::from_Keyboard(str key) {
+static void change_toggle_key::from_Keyboard(const string& key) {
     if (change_Key == "left") {
         MainWindow::instance->update_key_label("left", key);
         MainWindow::instance->change_hold_Checkbox("left", true);
@@ -123,7 +123,7 @@ void change_toggle_key::from_Keyboard(str key) {
     }
 }
 
-void change_toggle_key::from_Mouse(WPARAM wparam) {
+static void change_toggle_key::from_Mouse(const WPARAM& wparam) {
     if (change_Key == "left") {
         switch (wparam) {
 
@@ -164,7 +164,7 @@ void change_toggle_key::from_Mouse(WPARAM wparam) {
 }
 
 
-void change_active_bool(str button) {
+static void change_active_bool(const string& button) {
     if (button == "left") {
         if (is_active_L == false) {
             is_active_L = true;
@@ -189,7 +189,7 @@ void change_active_bool(str button) {
     MainWindow::instance->update_status_label();
 }
 
-void change_mouse_bool(str button, str status) {
+static void change_mouse_bool(const string& button, const string& status) {
     if (button == "left") {
         if (status == "down") {
             if (left::skip_Next_Down == true) left::skip_Next_Down = false;
@@ -213,16 +213,16 @@ void change_mouse_bool(str button, str status) {
 }
 
 
-str get_Key_Name(DWORD scanCode) {
+static string get_Key_Name(const DWORD& scanCode) {
     char key_Name[512];
     GetKeyNameTextA(scanCode << 16, key_Name, sizeof(key_Name));
-    return str(key_Name);
+    return string(key_Name);
 }
 
 LRESULT CALLBACK keyboard_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
     if (ncode >= 0 && (wparam == WM_KEYDOWN || wparam == WM_SYSKEYDOWN)) {
         KBDLLHOOKSTRUCT* pKeyboard = (KBDLLHOOKSTRUCT*)lparam;
-        str key = get_Key_Name(pKeyboard->scanCode);
+        string key = get_Key_Name(pKeyboard->scanCode);
 
         if (change_Key == "no" && config::toggle_Key_L == key && (config::mouse_Button == "left" || config::mouse_Button == "both")) {
             change_active_bool("left");

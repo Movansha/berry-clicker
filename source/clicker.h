@@ -4,7 +4,7 @@
 #include <thread>
 #include <Windows.h>
 
-using str = std::string;
+using std::string;
 using std::thread;
 
 
@@ -35,8 +35,8 @@ namespace clicker {
 }
 
 namespace change_toggle_key {
-    void from_Keyboard(str key);
-    void from_Mouse(WPARAM wparam);
+    static void from_Keyboard(const string& key);
+    static void from_Mouse(const WPARAM& wparam);
 }
 
 LRESULT CALLBACK keyboard_Proc(int ncode, WPARAM wparam, LPARAM lparam);

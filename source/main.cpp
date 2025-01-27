@@ -1,9 +1,9 @@
 #include "settings.h"
+#include "clicker.h"
 
 #include <QtWidgets/QApplication>
 #include "main_window.h"
 
-#include "clicker.h"
 #include <thread>
 
 

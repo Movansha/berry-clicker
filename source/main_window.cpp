@@ -9,9 +9,9 @@
 #include <string>
 #include <Windows.h>
 
-using str = std::string;
+using std::string;
 
-str change_Key = "no";
+string change_Key = "no";
 
 
 MainWindow* MainWindow::instance = nullptr;
@@ -49,7 +49,7 @@ void MainWindow::set_SS() {
     else ui.off_Button->setStyleSheet(selected_SS);
 }
 
-void MainWindow::update_key_label(str button, str key) {
+void MainWindow::update_key_label(const string& button, const string& key) {
     QString key_text = QString::fromStdString(key);
 
     if (button == "left") ui.tk_Left_Button->setText(key_text);
@@ -58,7 +58,7 @@ void MainWindow::update_key_label(str button, str key) {
     change_Key = "no";
 }
 
-void MainWindow::change_hold_Checkbox(str button, bool status) {
+void MainWindow::change_hold_Checkbox(const string& button, const bool& status) {
     if (button == "left") {
         ui.hold_L_CheckBox->blockSignals(true);
         ui.hold_L_CheckBox->setChecked(status);
@@ -79,7 +79,7 @@ void MainWindow::change_hold_Checkbox(str button, bool status) {
 }
 
 void MainWindow::update_status_label() {
-    str left, right;
+    string left, right;
 
     if (is_active_L == true) left = "Active";
     else left = "Deactive";
@@ -87,7 +87,7 @@ void MainWindow::update_status_label() {
     if (is_active_R == true) right = "Active";
     else right = "Deactive";
 
-    str label = "Left: " + left + "  |  " + "Right: " + right;
+    string label = "Left: " + left + "  |  " + "Right: " + right;
     ui.status_Label->setText(QString::fromStdString(label));
 }
 
@@ -109,7 +109,7 @@ void MainWindow::change_TK_R() {
     change_Key = "right";
 }
 
-void MainWindow::change_L_CPS(double value) {
+void MainWindow::change_L_CPS(const int& value) {
     try {
         config::left_CPS = value;
         write_cfg(line_L_CPS, std::to_string(value));
@@ -120,7 +120,7 @@ void MainWindow::change_L_CPS(double value) {
     }
 }
 
-void MainWindow::change_R_CPS(double value) {
+void MainWindow::change_R_CPS(const int& value) {
     try {
         config::right_CPS = value;
         write_cfg(line_R_CPS, std::to_string(value));
@@ -131,7 +131,7 @@ void MainWindow::change_R_CPS(double value) {
     }
 }
 
-void MainWindow::change_MH_L(bool state) {
+void MainWindow::change_MH_L(const bool& state) {
     clicker::stop();
     MainWindow::update_status_label();
 
@@ -139,7 +139,7 @@ void MainWindow::change_MH_L(bool state) {
     write_cfg(line_MH_L, std::to_string(state));
 }
 
-void MainWindow::change_MH_R(bool state) {
+void MainWindow::change_MH_R(const bool& state) {
     clicker::stop();
     MainWindow::update_status_label();
 
@@ -224,8 +224,8 @@ void MainWindow::load_cfg_into_ui() {
 void MainWindow::connect_buttons() {
     connect(ui.tk_Left_Button, &QPushButton::clicked, this, &MainWindow::change_TK_L);
     connect(ui.tk_Right_Button, &QPushButton::clicked, this, &MainWindow::change_TK_R);
-    connect(ui.left_cps_SpinBox, SIGNAL(valueChanged(double)), this, SLOT(change_L_CPS(double)));
-    connect(ui.right_cps_SpinBox, SIGNAL(valueChanged(double)), this, SLOT(change_R_CPS(double)));
+    connect(ui.left_cps_SpinBox, SIGNAL(valueChanged(int)), this, SLOT(change_L_CPS(int)));
+    connect(ui.right_cps_SpinBox, SIGNAL(valueChanged(int)), this, SLOT(change_R_CPS(int)));
     connect(ui.hold_L_CheckBox, &QCheckBox::stateChanged, this, &MainWindow::change_MH_L);
     connect(ui.hold_R_CheckBox, &QCheckBox::stateChanged, this, &MainWindow::change_MH_R);
     connect(ui.left_Button, &QPushButton::clicked, this, &MainWindow::change_MB_Left);

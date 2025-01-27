@@ -6,21 +6,23 @@
 
 
 using std::ifstream; using std::ofstream;
-using std::vector;
 using std::stoi; using std::stod;
 
+using std::string;
+using std::vector;
 
-str config::toggle_Key_L, config::toggle_Key_R;
-double config::left_CPS, config::right_CPS;
+
+string config::toggle_Key_L, config::toggle_Key_R;
+int config::left_CPS, config::right_CPS;
 bool config::mouse_hold_L, config::mouse_hold_R;
 
-str config::mouse_Button;
+string config::mouse_Button;
 bool config::toggle_Sound;
 
 int line_TK_L = 0, line_TK_R = 1, line_L_CPS = 2, line_R_CPS = 3, line_MH_L = 4, line_MH_R = 5, line_MB = 6, line_TS = 7;
 
 
-void set_values(str TK_L, str TK_R, double L_CPS, double R_CPS, bool MH_L, bool MH_R, str MB, bool TS) {
+static void set_values(string TK_L, string TK_R, int L_CPS, int R_CPS, bool MH_L, bool MH_R, string MB, bool TS) {
     config::toggle_Key_L = TK_L;
     config::toggle_Key_R = TK_R;
 
@@ -34,13 +36,13 @@ void set_values(str TK_L, str TK_R, double L_CPS, double R_CPS, bool MH_L, bool 
     config::toggle_Sound = TS;
 }
 
-void default_values() {
+static void default_values() {
     ofstream file("settings.cfg");
 
-    vector<str> lines = { "R", "R", "15", "20", "1", "1", "left", "0" };
-    set_values("R", "R", 15, 20, true, true, "left", false);
+    vector<string> lines = { "R", "R", "15", "20", "1", "1", "left", "1" };
+    set_values("R", "R", 15, 20, true, true, "left", true);
 
-    for (const str line : lines) {
+    for (const string line : lines) {
         file << line << "\n";
     }
 
@@ -50,8 +52,8 @@ void default_values() {
 
 void setup_cfg() {
     try {
-        vector<str> lines;
-        str temp;
+        vector<string> lines;
+        string temp;
         ifstream cfg_file("settings.cfg");
 
         if (!cfg_file.is_open()) throw std::ios_base::failure("settings.cfg file couldn't open");
@@ -63,7 +65,7 @@ void setup_cfg() {
         cfg_file.close();
 
         set_values(lines[line_TK_L], lines[line_TK_R],
-            stod(lines[line_L_CPS]), stod(lines[line_R_CPS]),
+            stoi(lines[line_L_CPS]), stoi(lines[line_R_CPS]),
             stoi(lines[line_MH_L]), stoi(lines[line_MH_R]),
             lines[line_MB], stoi(lines[line_TS]));
     }
@@ -73,10 +75,10 @@ void setup_cfg() {
     }
 }
 
-void write_cfg(int line, str text) {
+void write_cfg(const int& line, const string& text) {
     try {
-        vector<str> lines;
-        str temp;
+        vector<string> lines;
+        string temp;
         ifstream input_file("settings.cfg");
 
         if (!input_file.is_open()) throw std::ios_base::failure("settings.cfg file couldn't open");
@@ -93,7 +95,7 @@ void write_cfg(int line, str text) {
 
         if (!output_file.is_open()) throw std::ios_base::failure("settings.cfg file couldn't open");
 
-        for (const str line : lines) {
+        for (const string line : lines) {
             output_file << line << "\n";
         }
 
