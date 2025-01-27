@@ -9,8 +9,8 @@ This app clicks automatically the mouse buttons (left, right or both) you select
 !! Warning: Don't use this application for cheating and unfair competition !!
 
 
-## Download The Latest Release
-[Download](https://github.com/Movansha/berry-clicker/releases/latest)
+## Download
+[Latest Release](https://github.com/Movansha/berry-clicker/releases/latest)
 
 
 ## Screenshot
