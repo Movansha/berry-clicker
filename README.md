@@ -1,4 +1,4 @@
-# ![BC_icon](https://github.com/user-attachments/assets/cf113c03-30ed-4afa-b720-636077001cbf) Berry Clicker v1.2
+# ![BC_icon](https://github.com/user-attachments/assets/cf113c03-30ed-4afa-b720-636077001cbf) Berry Clicker
 
 Auto clicker application for mice.
 
@@ -17,8 +17,8 @@ This app clicks automatically the mouse buttons (left, right or both) you select
 
 
 ## Easy to Use (Step by Step)
-- Download the zip file -> [Latest Release](https://github.com/Movansha/berry-clicker/releases/latest)
-- Extract file named "Berry-Clicker_v1.2.exe" and install it.
+- Download the .msi file -> [Latest Release](https://github.com/Movansha/berry-clicker/releases/latest)
+- Install it.
 - Run the application
 - Adjust the settings according to your needs
 - Press the key you set
