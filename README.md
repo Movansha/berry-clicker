@@ -17,7 +17,7 @@ This app clicks automatically the mouse buttons (left, right or both) you select
 
 
 ## Easy to Use (Step by Step)
-- Download the .msi file -> [Latest Release](https://github.com/Movansha/berry-clicker/releases/latest)
+- Download the app -> [Latest Release](https://github.com/Movansha/berry-clicker/releases/latest)
 - Install it.
 - Run the application
 - Adjust the settings according to your needs
