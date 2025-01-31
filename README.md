@@ -12,11 +12,11 @@ This app clicks automatically the mouse buttons (left, right or both) you select
 ### [Download The Latest Release](https://github.com/Movansha/berry-clicker/releases/latest)
 
 
-## Screenshot
+# Screenshot
 ![bc-ss](https://github.com/user-attachments/assets/8665d6d0-4873-497a-86b2-6f7cf914c496)
 
 
-## Easy to Use (Step by Step)
+# Easy to Use (Step by Step)
 - Download the app -> [Latest Release](https://github.com/Movansha/berry-clicker/releases/latest)
 - Install it.
 - Run the application
