@@ -2,7 +2,7 @@
 
 Auto clicker application for mice.
 
-This application developed with C++ and Qt 6.7.3 (non-commerical) is used in this project.
+This application developed with C++ 14 and Qt 6.7.3 (non-commerical) is used in this project.
 
 This app clicks automatically the mouse buttons (left, right or both) you selected.
 
