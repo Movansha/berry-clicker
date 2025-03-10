@@ -1,9 +1,11 @@
 <RCC>
-    <qresource prefix="/MainWindow">
-        <file>resources/M-Dark.png</file>
-        <file>resources/mouse_icons/both.png</file>
-        <file>resources/mouse_icons/left.png</file>
-        <file>resources/mouse_icons/right.png</file>
-        <file>resources/window.ico</file>
-    </qresource>
+  <qresource prefix="icons">
+    <file>resources/app.ico</file>
+    <file>resources/m-dark.png</file>
+  </qresource>
+  <qresource prefix="mouse_icons">
+    <file>resources/mouse_icons/both.png</file>
+    <file>resources/mouse_icons/left.png</file>
+    <file>resources/mouse_icons/right.png</file>
+  </qresource>
 </RCC>

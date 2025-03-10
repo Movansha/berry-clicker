@@ -1,45 +1,60 @@
+#include "config.h"
+
 #include "clicker.h"
+#include "mainwindow.h"
 
-#include "settings.h"
-#include "main_window.h"
+#include <string>
 
-#include <thread>
 #include <chrono>
+#include <thread>
 #include <Windows.h>
 
-#pragma comment(lib, "WinMM.lib")
-
+#pragma comment (lib, "WinMM.lib")
 
 using std::string;
 using std::thread;
 
+//----------
 
-bool clicker::program = true;
-bool is_active_L = false, is_active_R = false;
+thread left_clicker_Thread;
+thread right_clicker_Thread;
+thread msg_loop_Thread;
 
-bool left::status = false;
-bool left::skip_Next_Down = false, left::skip_Next_Up = false;
+HHOOK keyboard_hook;
+HHOOK mouse_hook;
 
-bool right::status = false;
-bool right::skip_Next_Down = false, right::skip_Next_Up = false;
-
-thread left_Clicker_Thread, right_Clicker_Thread, msg_loop_Thread;
-HHOOK mouse_Hook, keyboard_Hook;
 DWORD msg_loop_ID;
 
+//----------
 
-static void send_Click(const string& button) {
+bool clicker::program = true;
+
+bool is_active_L = false;
+bool is_active_R = false;
+
+bool left::is_active_mouse = false;
+bool left::skip_next_down = false;
+bool left::skip_next_up = false;
+
+bool right::is_active_mouse = false;
+bool right::skip_next_down = false;
+bool right::skip_next_up = false;
+
+
+//----------
+
+static void send_click(const string& button) {
     INPUT input = { 0 };
     input.type = INPUT_MOUSE;
 
     if (button == "left") {
         input.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-        left::skip_Next_Down = true;
+        left::skip_next_down = true;
     }
 
-    if (button == "right") {
+    else if (button == "right") {
         input.mi.dwFlags = MOUSEEVENTF_RIGHTDOWN;
-        right::skip_Next_Down = true;
+        right::skip_next_down = true;
     }
 
     SendInput(1, &input, sizeof(INPUT));
@@ -51,35 +66,31 @@ static void send_Click(const string& button) {
 
     if (button == "left") {
         input.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-        left::skip_Next_Up = true;
+        left::skip_next_up = true;
     }
 
-    if (button == "right") {
+    else if (button == "right") {
         input.mi.dwFlags = MOUSEEVENTF_RIGHTUP;
-        right::skip_Next_Up = true;
+        right::skip_next_up = true;
     }
 
     SendInput(1, &input, sizeof(INPUT));
     ZeroMemory(&input, sizeof(INPUT));
 }
 
-void clicker::stop() {
-    is_active_L = false; is_active_R = false;
 
-    left::status = false; right::status = false;
-
-    left::skip_Next_Down = false; left::skip_Next_Up = false;
-    right::skip_Next_Down = false; right::skip_Next_Up = false;
-}
+//----------
 
 void clicker::left() {
     while (clicker::program == true) {
-        while ((is_active_L == true && config::mouse_hold_L == false) ||
-            (is_active_L == true && config::mouse_hold_L == true && left::status == true)) {
+        while (
+            (is_active_L == true && config_json["mouse_hold_left"] == false)
+            ||
+            (is_active_L == true && config_json["mouse_hold_left"] == true && left::is_active_mouse == true)) {
 
-            thread click = thread(send_Click, "left");
+            thread click = thread(send_click, "left");
 
-            std::chrono::milliseconds wait(1000 / config::left_CPS);
+            std::chrono::milliseconds wait(1000 / config_json["left_cps"]);
             std::this_thread::sleep_for(wait);
 
             if (click.joinable()) click.join();
@@ -90,12 +101,14 @@ void clicker::left() {
 
 void clicker::right() {
     while (clicker::program == true) {
-        while ((is_active_R == true && config::mouse_hold_R == false) ||
-            (is_active_R == true && config::mouse_hold_R == true && right::status == true)) {
+        while (
+            (is_active_R == true && config_json["mouse_hold_right"] == false)
+            ||
+            (is_active_R == true && config_json["mouse_hold_right"] == true && right::is_active_mouse == true)) {
 
-            thread click = thread(send_Click, "right");
+            thread click = thread(send_click, "right");
 
-            std::chrono::milliseconds wait(1000 / config::right_CPS);
+            std::chrono::milliseconds wait(1000 / config_json["right_cps"]);
             std::this_thread::sleep_for(wait);
 
             if (click.joinable()) click.join();
@@ -104,144 +117,201 @@ void clicker::right() {
     }
 }
 
+void clicker::stop() {
+    is_active_L = false;
+    is_active_R = false;
 
-// Keyboard and mouse >>
+    left::is_active_mouse = false;
+    right::is_active_mouse = false;
 
-static void change_toggle_key::from_Keyboard(const string& key) {
-    if (change_Key == "left") {
+    left::skip_next_down = false;
+    left::skip_next_up = false;
+
+    right::skip_next_down = false;
+    right::skip_next_up = false;
+}
+
+//----------
+
+static void change_toggle_keys::from_keyboard(const string& key) {
+    if (change_key == "left") {
+        change_key = "false";
+
+        config_json["toggle_key_left"] = key;
+
+        if (!write_json()) {
+            MainWindow::instance->load_cfg_into_ui();
+            return;
+        }
+
         MainWindow::instance->update_key_label("left", key);
-        MainWindow::instance->change_hold_Checkbox("left", true);
-        config::toggle_Key_L = key;
-        write_cfg(line_TK_L, key);
+        MainWindow::instance->change_checkbox("left", true);
     }
 
-    else if (change_Key == "right") {
-        config::toggle_Key_R = key;
+    else if (change_key == "right") {
+        change_key = "false";
+
+        config_json["toggle_key_right"] = key;
+
+        if (!write_json()) {
+            MainWindow::instance->load_cfg_into_ui();
+            return;
+        }
+
         MainWindow::instance->update_key_label("right", key);
-        MainWindow::instance->change_hold_Checkbox("right", true);
-        write_cfg(line_TK_R, key);
+        MainWindow::instance->change_checkbox("right", true);
     }
 }
 
-static void change_toggle_key::from_Mouse(const WPARAM& wparam) {
-    if (change_Key == "left") {
-        switch (wparam) {
+static void change_toggle_keys::from_mouse(const WPARAM& wparam, const LPARAM& lparam) {
+    if (change_key == "left") {
+        change_key = "false";
 
-        case WM_MBUTTONDOWN:
-            config::toggle_Key_L = "M Middle";
-            break;
-
-        case WM_XBUTTONDOWN:
-            config::toggle_Key_L = "M Side";
-            break;
-
-        default:
-            break;
+        if (wparam == WM_MBUTTONDOWN) {
+            config_json["toggle_key_left"] = "M. Middle";
         }
-        MainWindow::instance->update_key_label("left", config::toggle_Key_L);
-        MainWindow::instance->change_hold_Checkbox("left", false);
-        write_cfg(line_TK_L, config::toggle_Key_L);
+
+        else if (wparam == WM_XBUTTONDOWN) {
+            PMSLLHOOKSTRUCT pMouseStruct = PMSLLHOOKSTRUCT(lparam);
+            WORD xButton = HIWORD(pMouseStruct->mouseData);
+
+            string side_button = (xButton == XBUTTON1) ? "M. Back" : "M. Forward";
+
+            config_json["toggle_key_left"] = side_button;
+        }
+
+        if (!write_json()) {
+            MainWindow::instance->load_cfg_into_ui();
+            return;
+        }
+
+        MainWindow::instance->update_key_label("left", config_json["toggle_key_left"]);
+        MainWindow::instance->change_checkbox("left", false);
     }
 
-    else if (change_Key == "right") {
-        switch (wparam) {
+    else if (change_key == "right") {
+        change_key = "false";
 
-        case WM_MBUTTONDOWN:
-            config::toggle_Key_R = "M Middle";
-            break;
-
-        case WM_XBUTTONDOWN:
-            config::toggle_Key_R = "M Side";
-            break;
-
-        default:
-            break;
+        if (wparam == WM_MBUTTONDOWN) {
+            config_json["toggle_key_right"] = "M. Middle";
         }
-        MainWindow::instance->update_key_label("right", config::toggle_Key_R);
-        MainWindow::instance->change_hold_Checkbox("right", false);
-        write_cfg(line_TK_R, config::toggle_Key_R);
+
+        else if (wparam == WM_XBUTTONDOWN) {
+            PMSLLHOOKSTRUCT pMouseStruct = PMSLLHOOKSTRUCT(lparam);
+            WORD xButton = HIWORD(pMouseStruct->mouseData);
+
+            string side_button = (xButton == XBUTTON1) ? "M. Back" : "M. Forward";
+
+            config_json["toggle_key_right"] = side_button;
+        }
+
+        if (!write_json()) {
+            MainWindow::instance->load_cfg_into_ui();
+            return;
+        }
+
+        MainWindow::instance->update_key_label("right", config_json["toggle_key_right"]);
+        MainWindow::instance->change_checkbox("right", false);
     }
 }
 
+//----------
 
-static void change_active_bool(const string& button) {
-    if (button == "left") {
+static void change_active_bool(const string& mouse_button) {
+    if (mouse_button == "left") {
         if (is_active_L == false) {
             is_active_L = true;
-            if (config::toggle_Sound == true) PlaySound(TEXT("resources/active.wav"), NULL, SND_PURGE | SND_FILENAME | SND_ASYNC);
+            if (config_json["toggle_sound"] == true) PlaySound(TEXT("resources/active.wav"), NULL, SND_PURGE | SND_FILENAME | SND_ASYNC);
         }
         else {
             is_active_L = false;
-            if (config::toggle_Sound == true) PlaySound(TEXT("resources/deactive.wav"), NULL, SND_PURGE | SND_FILENAME | SND_ASYNC);
+            if (config_json["toggle_sound"] == true) PlaySound(TEXT("resources/deactive.wav"), NULL, SND_PURGE | SND_FILENAME | SND_ASYNC);
         }
     }
 
-    else if (button == "right") {
+    else if (mouse_button == "right") {
         if (is_active_R == false) {
             is_active_R = true;
-            if (config::toggle_Sound == true) PlaySound(TEXT("resources/active.wav"), NULL, SND_PURGE | SND_FILENAME | SND_ASYNC);
+            if (config_json["toggle_sound"] == true) PlaySound(TEXT("resources/active.wav"), NULL, SND_PURGE | SND_FILENAME | SND_ASYNC);
         }
         else {
             is_active_R = false;
-            if (config::toggle_Sound == true) PlaySound(TEXT("resources/deactive.wav"), NULL, SND_PURGE | SND_FILENAME | SND_ASYNC);
+            if (config_json["toggle_sound"] == true) PlaySound(TEXT("resources/deactive.wav"), NULL, SND_PURGE | SND_FILENAME | SND_ASYNC);
         }
     }
+
     MainWindow::instance->update_status_label();
 }
 
-static void change_mouse_bool(const string& button, const string& status) {
-    if (button == "left") {
+static void change_mouse_bool(const string& mouse_button, const string& status) {
+    if (mouse_button == "left") {
         if (status == "down") {
-            if (left::skip_Next_Down == true) left::skip_Next_Down = false;
-            else left::status = true;
+            if (left::skip_next_down == true) left::skip_next_down = false;
+            else left::is_active_mouse = true;;
         }
-        else {
-            if (left::skip_Next_Up == true) left::skip_Next_Up = false;
-            else left::status = false;
+
+        else if (status == "up") {
+            if (left::skip_next_up == true) left::skip_next_up = false;
+            else left::is_active_mouse = false;
         }
     }
-    else {
+
+    else if (mouse_button == "right") {
         if (status == "down") {
-            if (right::skip_Next_Down == true) right::skip_Next_Down = false;
-            else right::status = true;
+            if (right::skip_next_down == true) right::skip_next_down = false;
+            else right::is_active_mouse = true;
         }
-        else {
-            if (right::skip_Next_Up == true) right::skip_Next_Up = false;
-            else right::status = false;
+
+        else if (status == "up") {
+            if (right::skip_next_up == true) right::skip_next_up = false;
+            else right::is_active_mouse = false;
         }
     }
 }
 
+//----------
 
-static string get_Key_Name(const DWORD& scanCode) {
-    char key_Name[512];
-    GetKeyNameTextA(scanCode << 16, key_Name, sizeof(key_Name));
-    return string(key_Name);
+static string get_key_name(const DWORD& scanCode, const DWORD& flags) {
+    wchar_t key_name[512];
+    GetKeyNameTextW((scanCode << 16) | (flags << 24), key_name, sizeof(key_name) / sizeof(wchar_t));
+
+    int size_needed = WideCharToMultiByte(CP_UTF8, 0, key_name, -1, nullptr, 0, nullptr, nullptr);
+
+    string string_key_name(size_needed - 1, '\0');
+    WideCharToMultiByte(CP_UTF8, 0, key_name, -1, &string_key_name[0], size_needed, nullptr, nullptr);
+
+    return string_key_name;
 }
 
 LRESULT CALLBACK keyboard_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
     if (ncode >= 0 && (wparam == WM_KEYDOWN || wparam == WM_SYSKEYDOWN)) {
         KBDLLHOOKSTRUCT* pKeyboard = (KBDLLHOOKSTRUCT*)lparam;
-        string key = get_Key_Name(pKeyboard->scanCode);
+        string key = get_key_name(pKeyboard->scanCode, pKeyboard->flags);
 
-        if (change_Key == "no" && config::toggle_Key_L == key && (config::mouse_Button == "left" || config::mouse_Button == "both")) {
-            change_active_bool("left");
-        }
-        if (change_Key == "no" && config::toggle_Key_R == key && (config::mouse_Button == "right" || config::mouse_Button == "both")) {
-            change_active_bool("right");
+        if (change_key == "false") {
+            if (config_json["toggle_key_left"] == key && (config_json["mouse_button"] == "left" || config_json["mouse_button"] == "both")) {
+                change_active_bool("left");
+            }
+
+            if (config_json["toggle_key_right"] == key && (config_json["mouse_button"] == "right" || config_json["mouse_button"] == "both")) {
+                change_active_bool("right");
+            }
         }
 
-        if (change_Key != "no") {
-            change_toggle_key::from_Keyboard(key);
+        if (change_key != "false") {
+            change_toggle_keys::from_keyboard(key);
         }
     }
-    return CallNextHookEx(keyboard_Hook, ncode, wparam, lparam);
+
+    return CallNextHookEx(keyboard_hook, ncode, wparam, lparam);
 }
+
+//----------
 
 LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
     if (ncode >= 0) {
-        if (config::mouse_Button == "left" || config::mouse_Button == "both") {
-            if (config::mouse_hold_L == true && change_Key == "no") {
+        if (config_json["mouse_button"] == "left" || config_json["mouse_button"] == "both") {
+            if (config_json["mouse_hold_left"] == true && change_key == "false") {
                 if (wparam == WM_LBUTTONDOWN) {
                     change_mouse_bool("left", "down");
                 }
@@ -251,8 +321,8 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
                 }
             }
 
-            else if (config::mouse_hold_L == false && change_Key == "no") {
-                if (config::toggle_Key_L == "M Middle") {
+            else if (config_json["mouse_hold_left"] == false && change_key == "false") {
+                if (config_json["toggle_key_left"] == "M. Middle") {
                     if (wparam == WM_MBUTTONDOWN) {
                         is_active_L = true;
                     }
@@ -263,12 +333,17 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
                     MainWindow::instance->update_status_label();
                 }
 
-                else if (config::toggle_Key_L == "M Side") {
-                    if (wparam == WM_XBUTTONDOWN) {
+                else if (config_json["toggle_key_left"] == "M. Back" || "M. Forward") {
+                    PMSLLHOOKSTRUCT pMouseStruct = PMSLLHOOKSTRUCT(lparam);
+                    WORD xButton = HIWORD(pMouseStruct->mouseData);
+
+                    string side_button = (xButton == XBUTTON1) ? "M. Back" : "M. Forward";
+
+                    if (wparam == WM_XBUTTONDOWN && config_json["toggle_key_left"] == side_button) {
                         is_active_L = true;
                     }
 
-                    if (wparam == WM_XBUTTONUP) {
+                    if (wparam == WM_XBUTTONUP && config_json["toggle_key_left"] == side_button) {
                         is_active_L = false;
                     }
                     MainWindow::instance->update_status_label();
@@ -276,8 +351,8 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
             }
         }
 
-        if (config::mouse_Button == "right" || config::mouse_Button == "both") {
-            if (config::mouse_hold_R == true && change_Key == "no") {
+        if (config_json["mouse_button"] == "right" || config_json["mouse_button"] == "both") {
+            if (config_json["mouse_hold_right"] == true && change_key == "false") {
                 if (wparam == WM_RBUTTONDOWN) {
                     change_mouse_bool("right", "down");
                 }
@@ -287,8 +362,8 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
                 }
             }
 
-            else if (config::mouse_hold_R == false && change_Key == "no") {
-                if (config::toggle_Key_R == "M Middle") {
+            else if (config_json["mouse_hold_right"] == false && change_key == "false") {
+                if (config_json["toggle_key_right"] == "M. Middle") {
                     if (wparam == WM_MBUTTONDOWN) {
                         is_active_R = true;
                     }
@@ -299,12 +374,17 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
                     MainWindow::instance->update_status_label();
                 }
 
-                else if (config::toggle_Key_R == "M Side") {
-                    if (wparam == WM_XBUTTONDOWN) {
+                else if (config_json["toggle_key_right"] == "M. Back" || "M. Forward") {
+                    PMSLLHOOKSTRUCT pMouseStruct = PMSLLHOOKSTRUCT(lparam);
+                    WORD xButton = HIWORD(pMouseStruct->mouseData);
+
+                    string side_button = (xButton == XBUTTON1) ? "M. Back" : "M. Forward";
+
+                    if (wparam == WM_XBUTTONDOWN && config_json["toggle_key_right"] == side_button) {
                         is_active_R = true;
                     }
 
-                    if (wparam == WM_XBUTTONUP) {
+                    if (wparam == WM_XBUTTONUP && config_json["toggle_key_right"] == side_button) {
                         is_active_R = false;
                     }
                     MainWindow::instance->update_status_label();
@@ -312,16 +392,18 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
             }
         }
 
-        if (change_Key != "no" && (wparam == WM_MBUTTONDOWN || wparam == WM_XBUTTONDOWN)) change_toggle_key::from_Mouse(wparam);
+        if (change_key != "false" && (wparam == WM_MBUTTONDOWN || wparam == WM_XBUTTONDOWN)) change_toggle_keys::from_mouse(wparam, lparam);
     }
-    return CallNextHookEx(mouse_Hook, ncode, wparam, lparam);
+    return CallNextHookEx(mouse_hook, ncode, wparam, lparam);
 }
+
+//----------
 
 void handle_Hooks() {
     msg_loop_ID = GetCurrentThreadId();
 
-    keyboard_Hook = SetWindowsHookEx(WH_KEYBOARD_LL, keyboard_Proc, NULL, 0);
-    mouse_Hook = SetWindowsHookEx(WH_MOUSE_LL, mouse_Proc, NULL, 0);
+    keyboard_hook = SetWindowsHookEx(WH_KEYBOARD_LL, keyboard_Proc, NULL, 0);
+    mouse_hook = SetWindowsHookEx(WH_MOUSE_LL, mouse_Proc, NULL, 0);
 
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
