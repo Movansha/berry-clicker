@@ -11,7 +11,7 @@ This app clicks automatically the mouse buttons (left, right or both) you select
 ### [Download for Windows](https://github.com/Movansha/berry-clicker/releases/latest)
 
 # Screenshot
-![berry](https://github.com/user-attachments/assets/39bc5ed1-1119-4df5-add0-4cc268e25491)
+![BC](https://github.com/user-attachments/assets/8946b0fc-7a06-4e70-931e-03e7e32806dc)
 
 
 # Easy to Use (Step by Step)
