@@ -2,18 +2,21 @@
 
 Auto clicker application for mice
 
-This application developed with C++ 14 and Qt 6.7.3 (non-commerical) is used in this project.
-
 This app clicks automatically the mouse buttons (left, right or both) you selected.
+
+> #### Used in this project:
+> - Language: C++ (14)
+> - Library: JSON for modern C++ (nlohmann)
+> - Framework: Qt (6.7.3)
 
 > [!WARNING]
 > Don't use this application for cheating and unfair competition !!
 
 ### [*` >> Download for Windows `*](https://github.com/Movansha/berry-clicker/releases/latest)
 
+
 # Screenshot
 ![BC](https://github.com/user-attachments/assets/8946b0fc-7a06-4e70-931e-03e7e32806dc)
-
 
 #
 > ### Easy to Use (Step by Step)
