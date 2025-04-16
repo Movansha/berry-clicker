@@ -10,7 +10,7 @@ This app clicks automatically the mouse buttons (left, right or both) you select
 > - Framework: Qt (6.7.3)
 
 > [!WARNING]
-> Don't use this application for cheating and unfair competition !!
+> Don't use this application for cheating and unfair competition!
 
 ### [*` >> Download for Windows `*](https://github.com/Movansha/berry-clicker/releases/latest)
 
