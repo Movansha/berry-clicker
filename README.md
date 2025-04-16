@@ -6,17 +6,19 @@ This application developed with C++ 14 and Qt 6.7.3 (non-commerical) is used in 
 
 This app clicks automatically the mouse buttons (left, right or both) you selected.
 
-!! Warning: Don't use this application for cheating and unfair competition !!
+> [!WARNING]
+> Don't use this application for cheating and unfair competition !!
 
-### [Download for Windows](https://github.com/Movansha/berry-clicker/releases/latest)
+### [*` >> Download for Windows `*](https://github.com/Movansha/berry-clicker/releases/latest)
 
 # Screenshot
 ![BC](https://github.com/user-attachments/assets/8946b0fc-7a06-4e70-931e-03e7e32806dc)
 
 
-# Easy to Use (Step by Step)
-- Download the app -> [for Windows](https://github.com/Movansha/berry-clicker/releases/latest)
-- Install it.
-- Run the application
-- Adjust the settings according to your needs
-- Press the key you set
+#
+> ### Easy to Use (Step by Step)
+> - Download the app ---> [for Windows](https://github.com/Movansha/berry-clicker/releases/latest)
+> - Install it.
+> - Run the application
+> - Adjust the settings according to your needs
+> - Press the key you set
