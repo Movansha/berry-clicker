@@ -5,7 +5,7 @@ Auto clicker application for mice
 This app clicks automatically the mouse buttons (left, right or both) you selected.
 
 > #### Used in this project:
-> - Language: C++ (14)
+> - Language: C++ (17)
 > - Library: JSON for modern C++ (nlohmann)
 > - Framework: Qt (6.7.3)
 
