@@ -6,7 +6,7 @@ This app clicks automatically the mouse buttons (left, right or both) you select
 
 > #### Used in this project:
 > - Language: C++ (17)
-> - Library: JSON for modern C++ (nlohmann)
+> - Library: nlohmann/json (3.11.3)
 > - Framework: Qt (6.7.3)
 
 > [!WARNING]
