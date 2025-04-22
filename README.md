@@ -1,6 +1,6 @@
 # ![BC_icon](https://github.com/user-attachments/assets/cf113c03-30ed-4afa-b720-636077001cbf) Berry Clicker
 
-Auto clicker application for mice
+Advanced auto clicker application for mice
 
 This app clicks automatically the mouse buttons (left, right or both) you selected.
 
