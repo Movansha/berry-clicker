@@ -1,12 +1,11 @@
-#include "include/json.hpp"
-
 #include "config.h"
+
+#include "include/json.hpp"
 
 #include <ShlObj.h>
 #include <filesystem>
-#include <fstream>
 
-#include <string>
+#include <fstream>
 
 //----------
 
@@ -15,7 +14,7 @@ using nlohmann::json;
 using std::ifstream;
 using std::ofstream;
 
-using std::string;
+using std::wstring;
 
 json config_json;
 
@@ -23,41 +22,25 @@ json config_json;
 
 //----------
 
-static string get_path_AppData() {
+static wstring get_path_AppData() {
     PWSTR temp = NULL;
-    string output;
 
-    if (SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &temp) == S_OK) {
-        std::wstring path = std::wstring(temp);
+    SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &temp);
 
-        size_t converted = 0;
-        size_t buffer_size = path.length() + 1;
-        char* buffer = new char[buffer_size];
-
-        const wchar_t* w_path = path.c_str();
-        errno_t err = wcstombs_s(&converted, buffer, buffer_size, w_path, path.length());
-
-        if (err == 0) output = string(buffer) + "\\";
-        else output = "";
-
-        delete[] buffer;
-        CoTaskMemFree(temp);
-    }
-
-    return output;
+    return wstring(temp);
 }
 
-static string get_config_folder() {
-    string config_folder = get_path_AppData() + "Movansha\\Berry Clicker\\";
+static wstring mkdir_in_AppData(const wstring& path) {
+    wstring folder = get_path_AppData() + L"\\" + path;
 
-    if (!std::filesystem::exists(config_folder)) std::filesystem::create_directories(config_folder);
+    if (!std::filesystem::exists(folder)) std::filesystem::create_directories(folder);
 
-    return config_folder;
+    return folder;
 }
+
+static wstring config_file = mkdir_in_AppData(L"Movansha\\Berry Clicker") + L"\\config.json";
 
 //----------
-
-static string config_file = get_config_folder() + "config.json";
 
 static void default_values() {
     config_json = {

@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
     app.setStyle("Fusion");
 
     MainWindow window;
-    window.load_cfg_into_ui();
     window.show();
 
     left_clicker_Thread = thread(clicker::left);

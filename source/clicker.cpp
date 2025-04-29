@@ -140,12 +140,12 @@ static void change_toggle_keys::from_keyboard(const string& key) {
         config_json["toggle_key_left"] = key;
 
         if (!write_json()) {
-            MainWindow::instance->load_cfg_into_ui();
+            emit MainWindow::instance->load_cfg_into_ui();
             return;
         }
 
-        MainWindow::instance->update_key_label("left", key);
-        MainWindow::instance->change_checkbox("left", true);
+        emit MainWindow::instance->update_key_label("left", key);
+        emit MainWindow::instance->change_checkbox("left", true);
     }
 
     else if (change_key == "right") {
@@ -154,12 +154,12 @@ static void change_toggle_keys::from_keyboard(const string& key) {
         config_json["toggle_key_right"] = key;
 
         if (!write_json()) {
-            MainWindow::instance->load_cfg_into_ui();
+            emit MainWindow::instance->load_cfg_into_ui();
             return;
         }
 
-        MainWindow::instance->update_key_label("right", key);
-        MainWindow::instance->change_checkbox("right", true);
+        emit MainWindow::instance->update_key_label("right", key);
+        emit MainWindow::instance->change_checkbox("right", true);
     }
 }
 
@@ -181,12 +181,12 @@ static void change_toggle_keys::from_mouse(const WPARAM& wparam, const LPARAM& l
         }
 
         if (!write_json()) {
-            MainWindow::instance->load_cfg_into_ui();
+            emit MainWindow::instance->load_cfg_into_ui();
             return;
         }
 
-        MainWindow::instance->update_key_label("left", config_json["toggle_key_left"]);
-        MainWindow::instance->change_checkbox("left", false);
+        emit MainWindow::instance->update_key_label("left", config_json["toggle_key_left"]);
+        emit MainWindow::instance->change_checkbox("left", false);
     }
 
     else if (change_key == "right") {
@@ -206,12 +206,12 @@ static void change_toggle_keys::from_mouse(const WPARAM& wparam, const LPARAM& l
         }
 
         if (!write_json()) {
-            MainWindow::instance->load_cfg_into_ui();
+            emit MainWindow::instance->load_cfg_into_ui();
             return;
         }
 
-        MainWindow::instance->update_key_label("right", config_json["toggle_key_right"]);
-        MainWindow::instance->change_checkbox("right", false);
+        emit MainWindow::instance->update_key_label("right", config_json["toggle_key_right"]);
+        emit MainWindow::instance->change_checkbox("right", false);
     }
 }
 
@@ -240,7 +240,7 @@ static void change_active_bool(const string& mouse_button) {
         }
     }
 
-    MainWindow::instance->update_status_label();
+    emit MainWindow::instance->update_status_label();
 }
 
 static void change_mouse_bool(const string& mouse_button, const string& status) {
@@ -330,7 +330,7 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
                     if (wparam == WM_MBUTTONUP) {
                         is_active_L = false;
                     }
-                    MainWindow::instance->update_status_label();
+                    emit MainWindow::instance->update_status_label();
                 }
 
                 else if (config_json["toggle_key_left"] == "M. Back" || "M. Forward") {
@@ -346,7 +346,7 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
                     if (wparam == WM_XBUTTONUP && config_json["toggle_key_left"] == side_button) {
                         is_active_L = false;
                     }
-                    MainWindow::instance->update_status_label();
+                    emit MainWindow::instance->update_status_label();
                 }
             }
         }
@@ -371,7 +371,7 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
                     if (wparam == WM_MBUTTONUP) {
                         is_active_R = false;
                     }
-                    MainWindow::instance->update_status_label();
+                    emit MainWindow::instance->update_status_label();
                 }
 
                 else if (config_json["toggle_key_right"] == "M. Back" || "M. Forward") {
@@ -387,7 +387,7 @@ LRESULT CALLBACK mouse_Proc(int ncode, WPARAM wparam, LPARAM lparam) {
                     if (wparam == WM_XBUTTONUP && config_json["toggle_key_right"] == side_button) {
                         is_active_R = false;
                     }
-                    MainWindow::instance->update_status_label();
+                    emit MainWindow::instance->update_status_label();
                 }
             }
         }

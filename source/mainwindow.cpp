@@ -5,6 +5,7 @@
 #include <string>
 #include <QString>
 
+#include <shellapi.h>
 #include <QCloseEvent>
 
 using std::string;
@@ -36,7 +37,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     ui.setupUi(this);
     instance = this;
 
-    MainWindow::connect_buttons();
+    MainWindow::connect_slots();
+    emit MainWindow::load_cfg_into_ui();
 }
 
 MainWindow::~MainWindow() {}
@@ -59,33 +61,34 @@ void MainWindow::update_stylesheets() {
     else ui.button_OFF->setStyleSheet(selected_stylesheet);
 }
 
-void MainWindow::update_key_label(const string& toggle_key_button, const string& label) {
+//----------
+
+void MainWindow::handle_load_cfg() {
+    ui.button_tk_left->setText(QString::fromStdString(config_json["toggle_key_left"]));
+    ui.button_tk_right->setText(QString::fromStdString(config_json["toggle_key_right"]));
+
+    ui.spinbox_left->setValue(config_json["left_cps"]);
+    ui.spinbox_right->setValue(config_json["right_cps"]);
+
+    ui.checkbox_hold_L->setChecked(config_json["mouse_hold_left"]);
+    ui.checkbox_hold_R->setChecked(config_json["mouse_hold_right"]);
+
+    MainWindow::update_stylesheets();
+}
+
+void MainWindow::handle_update_key(const string& toggle_key_button, const string& label) {
     QString x = QString::fromStdString(label);
 
     if (toggle_key_button == "left") ui.button_tk_left->setText(x);
     if (toggle_key_button == "right") ui.button_tk_right->setText(x);
 }
 
-void MainWindow::update_status_label() {
-    string left;
-    string right;
-
-    left = (is_active_L == true) ? "Active" : "Deactive";
-    right = (is_active_R == true) ? "Active" : "Deactive";
-
-    string x = "Left: " + left + "  |  " + "Right: " + right;
-
-    ui.label_status->setText(QString::fromStdString(x));
-}
-
-//----------
-
-void MainWindow::change_checkbox(const string& button, const bool& status) {
+void MainWindow::handle_change_checkbox(const string& button, const bool& status) {
     if (button == "left") {
         config_json["mouse_hold_left"] = status;
 
         if (!write_json()) {
-            MainWindow::load_cfg_into_ui();
+            emit MainWindow::load_cfg_into_ui();
             return;
         }
 
@@ -98,7 +101,7 @@ void MainWindow::change_checkbox(const string& button, const bool& status) {
         config_json["mouse_hold_right"] = status;
 
         if (!write_json()) {
-            MainWindow::load_cfg_into_ui();
+            emit MainWindow::load_cfg_into_ui();
             return;
         }
 
@@ -108,7 +111,19 @@ void MainWindow::change_checkbox(const string& button, const bool& status) {
     }
 }
 
-//----------
+void MainWindow::handle_update_status() {
+    string left;
+    string right;
+
+    left = (is_active_L == true) ? "Active" : "Deactive";
+    right = (is_active_R == true) ? "Active" : "Deactive";
+
+    string x = "Left: " + left + "  |  " + "Right: " + right;
+
+    ui.label_status->setText(QString::fromStdString(x));
+}
+
+
 // ui interaction -->
 
 void MainWindow::change_toggle_key(const string& for_mouse_button)  {
@@ -116,8 +131,8 @@ void MainWindow::change_toggle_key(const string& for_mouse_button)  {
 
     clicker::stop();
 
-    MainWindow::update_status_label();
-    MainWindow::update_key_label(for_mouse_button, "Press a key..");
+    emit MainWindow::update_status_label();
+    emit MainWindow::update_key_label(for_mouse_button, "Press a key..");
 
     change_key = for_mouse_button;
 }
@@ -125,28 +140,28 @@ void MainWindow::change_toggle_key(const string& for_mouse_button)  {
 void MainWindow::change_CPS_value(const string& json_item, const int& value) {
     config_json[json_item] = value;
 
-    if (!write_json()) MainWindow::load_cfg_into_ui();
+    if (!write_json()) emit MainWindow::load_cfg_into_ui();
 }
 
 void MainWindow::change_mouse_hold(const string& json_item, const bool& state) {
     clicker::stop();
 
-    MainWindow::update_status_label();
+    emit MainWindow::update_status_label();
 
     config_json[json_item] = state;
 
-    if (!write_json()) MainWindow::load_cfg_into_ui();
+    if (!write_json()) emit MainWindow::load_cfg_into_ui();
 }
 
 void MainWindow::change_mouse_button(const string& mouse_button) {
     clicker::stop();
 
-    MainWindow::update_status_label();
+    emit MainWindow::update_status_label();
 
     config_json["mouse_button"] = mouse_button;
 
     if (!write_json()) {
-        MainWindow::load_cfg_into_ui();
+        emit MainWindow::load_cfg_into_ui();
         return;
     }
 
@@ -157,7 +172,7 @@ void MainWindow::change_toggle_sound(const bool& status) {
     config_json["toggle_sound"] = status;
 
     if (!write_json()) {
-        MainWindow::load_cfg_into_ui();
+        emit MainWindow::load_cfg_into_ui();
         return;
     }
 
@@ -165,13 +180,13 @@ void MainWindow::change_toggle_sound(const bool& status) {
 }
 
 void MainWindow::developer_site() {
-    ShellExecute(0, 0, L"https://github.com/Movansha", 0, 0, SW_SHOWMAXIMIZED);
+    ShellExecuteW(0, L"open", L"https://github.com/Movansha/", NULL, NULL, SW_SHOW);
 }
 
 // ui interaction <--
 //----------
 
-void MainWindow::connect_buttons() {
+void MainWindow::connect_slots() {
     connect(ui.button_tk_left, &QPushButton::clicked, this, [&]() {MainWindow::change_toggle_key("left"); });
     connect(ui.button_tk_right, &QPushButton::clicked, this, [&]() {MainWindow::change_toggle_key("right"); });
     
@@ -189,19 +204,14 @@ void MainWindow::connect_buttons() {
     connect(ui.button_OFF, &QPushButton::clicked, this, [&]() {MainWindow::change_toggle_sound(false); });
 
     connect(ui.button_developer, &QPushButton::clicked, this, &MainWindow::developer_site);
-}
 
-void MainWindow::load_cfg_into_ui() {
-    ui.button_tk_left->setText(QString::fromStdString(config_json["toggle_key_left"]));
-    ui.button_tk_right->setText(QString::fromStdString(config_json["toggle_key_right"]));
+    //*****
 
-    ui.spinbox_left->setValue(config_json["left_cps"]);
-    ui.spinbox_right->setValue(config_json["right_cps"]);
+    connect(this, &MainWindow::load_cfg_into_ui, this, &MainWindow::handle_load_cfg);
 
-    ui.checkbox_hold_L->setChecked(config_json["mouse_hold_left"]);
-    ui.checkbox_hold_R->setChecked(config_json["mouse_hold_right"]);
-
-    MainWindow::update_stylesheets();
+    connect(this, &MainWindow::update_key_label, this, &MainWindow::handle_update_key);
+    connect(this, &MainWindow::change_checkbox, this, &MainWindow::handle_change_checkbox);
+    connect(this, &MainWindow::update_status_label, this, &MainWindow::handle_update_status);
 }
 
 //----------

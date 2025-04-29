@@ -26,13 +26,23 @@ public:
 
     static MainWindow* instance;
 
-    void update_key_label(const string& toggle_key_button, const string& label);
-    void update_status_label();
-    void change_checkbox(const string& button, const bool& status);
+//*****
 
+signals:
     void load_cfg_into_ui();
 
+    void update_key_label(const string& toggle_key_button, const string& label);
+    void change_checkbox(const string& button, const bool& status);
+    void update_status_label();
+
+
 private slots:
+    void handle_load_cfg();
+
+    void handle_update_key(const string& toggle_key_button, const string& label);
+    void handle_change_checkbox(const string& button, const bool& status);
+    void handle_update_status();
+
     void change_toggle_key(const string& for_mouse_button);
     void change_CPS_value(const string& json_item, const int& value);
     void change_mouse_hold(const string& json_item, const bool& state);
@@ -42,11 +52,13 @@ private slots:
 
     void developer_site();
 
+//*****
+
 private:
     Ui::MainWindowClass ui;
 
     void update_stylesheets();
-    void connect_buttons();
+    void connect_slots();
 
 protected:
     void closeEvent(QCloseEvent* event) override;
