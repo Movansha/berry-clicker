@@ -8,9 +8,9 @@
 
 resource.h
 
-*aps
-*rc
-*sln
-*vcxproj
-*filters
-*user
+*.aps
+*.rc
+*.sln
+*.vcxproj
+*.filters
+*.user
