@@ -1,0 +1,16 @@
+# ----- .gitignore for "source" folder -----
+
+
+# The files and folders from IDE (Visual Studio 2022)
+/.vs/
+/berry-clicker/
+/x64/
+
+resource.h
+
+*aps
+*rc
+*sln
+*vcxproj
+*filters
+*user
