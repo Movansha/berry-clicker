@@ -193,8 +193,8 @@ void MainWindow::connect_slots() {
     connect(ui.spinbox_left, &QSpinBox::valueChanged, this, [&]() {MainWindow::change_CPS_value("left_cps", ui.spinbox_left->value()); });
     connect(ui.spinbox_right, &QSpinBox::valueChanged, this, [&]() {MainWindow::change_CPS_value("right_cps", ui.spinbox_right->value()); });
 
-    connect(ui.checkbox_hold_L, &QCheckBox::stateChanged, this, [&]() {MainWindow::change_mouse_hold("mouse_hold_left", ui.checkbox_hold_L->isChecked()); });
-    connect(ui.checkbox_hold_R, &QCheckBox::stateChanged, this, [&]() {MainWindow::change_mouse_hold("mouse_hold_right", ui.checkbox_hold_R->isChecked()); });
+    connect(ui.checkbox_hold_L, &QCheckBox::checkStateChanged, this, [&]() {MainWindow::change_mouse_hold("mouse_hold_left", ui.checkbox_hold_L->isChecked()); });
+    connect(ui.checkbox_hold_R, &QCheckBox::checkStateChanged, this, [&]() {MainWindow::change_mouse_hold("mouse_hold_right", ui.checkbox_hold_R->isChecked()); });
 
     connect(ui.button_left, &QPushButton::clicked, this, [&]() {MainWindow::change_mouse_button("left"); });
     connect(ui.button_right, &QPushButton::clicked, this, [&]() {MainWindow::change_mouse_button("right"); });
